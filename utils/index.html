@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Evitar caché para que las actualizaciones se reflejen inmediatamente -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>STORMK90 // UTILS - Suite Profesional de Tratamiento de Imágenes & Vectorial</title>
+    <!-- Fuentes tipográficas monoespaciadas estilo terminal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/utils-matrix.css?v=4.0">
+</head>
+<body>
+    <!-- Efecto de Lluvia de Código Matrix en Fondo -->
+    <canvas id="matrix-canvas" class="matrix-canvas"></canvas>
+
+    <!-- Barra de Navegación Estilo Cyberpunk Terminal -->
+    <header class="terminal-navbar">
+        <div class="nav-left">
+            <a href="/" class="nav-back-btn" title="Volver al repositorio de utilidades">
+                <span class="cmd-prompt">&lt;_</span> [ HUB DE UTILS ]
+            </a>
+            <a href="/betting/" class="nav-back-btn" title="Ir a Betting IA - Predicciones Deportivas">
+                <span>⚽</span> [ BETTING IA ]
+            </a>
+            <div class="terminal-brand">
+                <span class="brand-title">STORMK90 <span class="brand-highlight">// UTILS</span></span>
+                <span class="brand-sub">SUITE MULTI-HERRAMIENTAS: VECTORIAL &bull; COMPRESIÓN &bull; REDIMENSIÓN &bull; RECORTE &bull; FORMATO</span>
+            </div>
+        </div>
+
+        <div class="nav-badges">
+            <span class="cyber-badge badge-active-tool" id="badge-active-tool">
+                <span class="pulse-dot"></span> MODO: ⚡ VECTORIAL
+            </span>
+            <span class="cyber-badge badge-sec">
+                OWASP LEVEL 3
+            </span>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal de la Utilidad -->
+    <main class="cyber-container">
+        
+        <!-- Panel Izquierdo: Selector de Herramientas y Controles -->
+        <aside class="cyber-sidebar">
+            
+            <!-- SELECTOR PRINCIPAL DE HERRAMIENTAS (PROMINENTE) -->
+            <section class="cyber-card tool-selector-hero">
+                <div class="card-header">
+                    <span class="step-num">[PASO 1]</span>
+                    <h3 class="card-title">SELECCIONA EL MODO DE TRABAJO</h3>
+                </div>
+                <div class="tool-mode-grid two-cols">
+                    <button type="button" class="tool-tab-btn active" data-tool="vector" title="Trazado vectorial matemático SVG, EPS y PDF">
+                        <span class="tab-icon">⚡</span>
+                        <span class="tab-text">VECTORIAL</span>
+                        <span class="tab-sub">Trazado por capas SVG &bull; EPS &bull; PDF</span>
+                    </button>
+                    <button type="button" class="tool-tab-btn" data-tool="convert" title="Cambio de formato, rotación, recorte, redimensión y compresión">
+                        <span class="tab-icon">🔄</span>
+                        <span class="tab-text">FORMATO & EDICIÓN</span>
+                        <span class="tab-sub">Formato &bull; Rotar &bull; Comprimir &bull; Redimensionar</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ZONA DE CARGA DE ARCHIVOS (DRAG & DROP) -->
+            <section class="cyber-card" id="drop-zone">
+                <div class="card-header">
+                    <span class="step-num">[PASO 2]</span>
+                    <h3 class="card-title">CARGAR ARCHIVO DE IMAGEN</h3>
+                </div>
+                <input type="file" id="file-input" accept="image/png, image/jpeg, image/webp, image/bmp, image/tiff" style="display: none;">
+                <div class="drop-target" id="drop-content">
+                    <div class="cyber-scanner"></div>
+                    <div class="upload-icon-box">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <p class="drop-text">ARRASTRA AQUÍ CUALQUIER IMAGEN</p>
+                    <span class="drop-sub">o haz clic para examinar archivos / pega con Ctrl+V</span>
+                    <span class="drop-specs">FORMATOS: PNG &bull; JPG &bull; WEBP &bull; BMP &bull; TIFF (MÁX 16MB)</span>
+                </div>
+            </section>
+
+            <!-- ========================================================
+                 SUBPANEL 1: MOTOR VECTORIAL (SVG, EPS, PDF)
+                 ======================================================== -->
+            <div class="tool-panel" id="panel-vector">
+                <section class="cyber-card" id="presets-card">
+                    <div class="card-header">
+                        <span class="step-num">[PASO 3]</span>
+                        <h3 class="card-title">PERFIL DE TRAZADO VECTORIAL</h3>
+                    </div>
+                    <p class="panel-instructions">&gt; Convierte mapa de bits en trazados matemáticos sin pérdida de resolución.</p>
+                    <div class="presets-matrix">
+                        <button type="button" class="preset-matrix-btn active" data-preset="logo">
+                            <span class="btn-bracket">[</span>
+                            <span class="preset-label">💎 LOGOTIPO / ICONO</span>
+                            <span class="btn-bracket">]</span>
+                        </button>
+                        <button type="button" class="preset-matrix-btn" data-preset="illustration">
+                            <span class="btn-bracket">[</span>
+                            <span class="preset-label">🎨 ILUSTRACIÓN HD</span>
+                            <span class="btn-bracket">]</span>
+                        </button>
+                        <button type="button" class="preset-matrix-btn" data-preset="photo">
+                            <span class="btn-bracket">[</span>
+                            <span class="preset-label">📸 FOTOGRAFÍA</span>
+                            <span class="btn-bracket">]</span>
+                        </button>
+                        <button type="button" class="preset-matrix-btn" data-preset="silhouette">
+                            <span class="btn-bracket">[</span>
+                            <span class="preset-label">⬛ SILUETA B&N</span>
+                            <span class="btn-bracket">]</span>
+                        </button>
+                        <button type="button" class="preset-matrix-btn" data-preset="pixel">
+                            <span class="btn-bracket">[</span>
+                            <span class="preset-label">👾 PIXEL ART</span>
+                            <span class="btn-bracket">]</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Parámetros de Precisión Bézier -->
+                <section class="cyber-card" id="advanced-card">
+                    <div class="card-header accordion-toggle" id="accordion-toggle">
+                        <div>
+                            <span class="step-num">[+]</span>
+                            <h3 class="card-title">AJUSTES AVANZADOS BÉZIER</h3>
+                        </div>
+                        <span class="accordion-icon" id="accordion-arrow">[+]</span>
+                    </div>
+                    
+                    <div class="accordion-content" id="accordion-body">
+                        <div class="control-box">
+                            <label class="control-tag" for="param-colormode">&gt; Modo de Color:</label>
+                            <select id="param-colormode" class="cyber-select">
+                                <option value="color" selected>Color completo (Multi-capa)</option>
+                                <option value="binary">Monocromo / Binario (1 bit)</option>
+                            </select>
+                        </div>
+
+                        <div class="control-box">
+                            <label class="control-tag" for="param-hierarchical">&gt; Jerarquía de Capas:</label>
+                            <select id="param-hierarchical" class="cyber-select">
+                                <option value="stacked" selected>Apiladas (Stacked - Sin huecos)</option>
+                                <option value="cutout">Recortadas (Cutout - Formas limpias)</option>
+                            </select>
+                        </div>
+
+                        <div class="control-box">
+                            <label class="control-tag" for="param-mode">&gt; Geometría de Curvas:</label>
+                            <select id="param-mode" class="cyber-select">
+                                <option value="spline" selected>Curvas Bézier Suaves (Spline)</option>
+                                <option value="polygon">Polígonos Rectos</option>
+                            </select>
+                        </div>
+
+                        <div class="control-box">
+                            <label class="control-tag" for="param-upscale">&gt; Supermuestreo HD:</label>
+                            <select id="param-upscale" class="cyber-select">
+                                <option value="2" selected>2x Alta Definición HD (Recomendado)</option>
+                                <option value="3">3x Ultra Definición (Máxima fidelidad)</option>
+                                <option value="1">1x Escala Original (Rápido)</option>
+                            </select>
+                        </div>
+
+                        <div class="control-box">
+                            <label class="control-tag" for="param-anti-halo">&gt; Filtro Anti-Halos / JPEG:</label>
+                            <select id="param-anti-halo" class="cyber-select">
+                                <option value="true" selected>Activado (Elimina fringes dobles)</option>
+                                <option value="false">Desactivado (Gradientes suaves)</option>
+                            </select>
+                        </div>
+
+                        <div class="control-box">
+                            <div class="range-header">
+                                <label class="control-tag" for="param-color-precision">&gt; Fidelidad de Color:</label>
+                                <span class="range-val" id="val-color-precision">4</span>
+                            </div>
+                            <input type="range" id="param-color-precision" min="1" max="8" value="4" class="cyber-range">
+                        </div>
+
+                        <div class="control-box">
+                            <div class="range-header">
+                                <label class="control-tag" for="param-layer-difference">&gt; Fusión Capas:</label>
+                                <span class="range-val" id="val-layer-difference">32</span>
+                            </div>
+                            <input type="range" id="param-layer-difference" min="8" max="64" value="32" class="cyber-range">
+                        </div>
+
+                        <div class="control-box">
+                            <div class="range-header">
+                                <label class="control-tag" for="param-filter-speckle">&gt; Filtro Ruido:</label>
+                                <span class="range-val" id="val-filter-speckle">2 px</span>
+                            </div>
+                            <input type="range" id="param-filter-speckle" min="0" max="32" value="2" class="cyber-range">
+                        </div>
+
+                        <div class="control-box">
+                            <div class="range-header">
+                                <label class="control-tag" for="param-corner-threshold">&gt; Tolerancia Esquinas:</label>
+                                <span class="range-val" id="val-corner-threshold">50°</span>
+                            </div>
+                            <input type="range" id="param-corner-threshold" min="10" max="150" value="50" class="cyber-range">
+                        </div>
+                    </div>
+
+                    <button type="button" class="cyber-btn-action" id="btn-reprocess" disabled>
+                        <span class="btn-cmd">&gt; RE-VECTORIZAR [ENTER]</span>
+                    </button>
+                </section>
+
+                <!-- Gestor de Capas Vectoriales -->
+                <section class="cyber-card" id="layers-card" style="display: none;">
+                    <div class="card-header flex-between">
+                        <div>
+                            <span class="step-num">[CAPAS]</span>
+                            <h3 class="card-title">CAPAS DETECTADAS (<span id="layers-count">0</span>)</h3>
+                        </div>
+                        <div class="layers-batch-actions">
+                            <button type="button" class="cyber-mini-btn" id="btn-show-all-layers" title="Mostrar todas">[ 👁️ TODAS ]</button>
+                            <button type="button" class="cyber-mini-btn" id="btn-hide-all-layers" title="Ocultar todas">[ 🚫 NINGUNA ]</button>
+                        </div>
+                    </div>
+                    <p class="layers-guide">&gt; 👁️ = Ocultar capa en descarga &bull; 🎯 = Aislar capa única</p>
+                    <div class="layers-container" id="layers-list"></div>
+                </section>
+            </div>
+
+            <!-- ========================================================
+                 SUBPANEL 2: FORMATO & EDICIÓN INTEGRAL
+                 (Formato, Compresión, Rotación, Redimensión y Recorte)
+                 ======================================================== -->
+            <div class="tool-panel" id="panel-convert" style="display: none;">
+                
+                <!-- 1. Formato de Salida y Compresión de Peso -->
+                <section class="cyber-card">
+                    <div class="card-header">
+                        <span class="step-num">[A]</span>
+                        <h3 class="card-title">FORMATO DE SALIDA & COMPRESIÓN</h3>
+                    </div>
+                    <p class="panel-instructions">&gt; Selecciona formato y ajusta el nivel de compresión para reducir peso.</p>
+
+                    <div class="format-cards-grid">
+                        <button type="button" class="fmt-card-btn active" data-format="webp">
+                            <span class="fmt-badge">RECOMENDADO</span>
+                            <span class="fmt-name">🌐 WebP</span>
+                            <span class="fmt-desc">Ahorra hasta un 85% de peso con canal alfa</span>
+                        </button>
+                        <button type="button" class="fmt-card-btn" data-format="jpg">
+                            <span class="fmt-badge">UNIVERSAL</span>
+                            <span class="fmt-name">📸 JPG / JPEG</span>
+                            <span class="fmt-desc">Estándar fotográfico universal</span>
+                        </button>
+                        <button type="button" class="fmt-card-btn" data-format="png">
+                            <span class="fmt-badge">SIN PÉRDIDAS</span>
+                            <span class="fmt-name">🎨 PNG</span>
+                            <span class="fmt-desc">Máxima nitidez con fondo transparente</span>
+                        </button>
+                        <button type="button" class="fmt-card-btn" data-format="ico">
+                            <span class="fmt-badge">FAVICON WEB</span>
+                            <span class="fmt-name">💎 ICO</span>
+                            <span class="fmt-desc">Icono multirresolución para pestañas web</span>
+                        </button>
+                        <button type="button" class="fmt-card-btn" data-format="bmp">
+                            <span class="fmt-badge">RAW</span>
+                            <span class="fmt-name">💾 BMP</span>
+                            <span class="fmt-desc">Mapa de bits estándar sin compresión</span>
+                        </button>
+                    </div>
+
+                    <div class="control-box" style="margin-top: 0.85rem;">
+                        <div class="range-header">
+                            <label class="control-tag" for="convert-quality">&gt; Nivel de Calidad (Peso):</label>
+                            <span class="range-val" id="val-convert-quality">80%</span>
+                        </div>
+                        <input type="range" id="convert-quality" min="5" max="100" value="80" class="cyber-range">
+                        <div class="range-hints">
+                            <span>Mínimo peso (20%)</span>
+                            <span>Equilibrado web (80%)</span>
+                            <span>Máxima calidad (100%)</span>
+                        </div>
+                    </div>
+
+                    <div class="control-box-checkbox" style="margin-top: 0.6rem;">
+                        <label class="cyber-check-label">
+                            <input type="checkbox" id="convert-lossless">
+                            <span>Modo Lossless (Compresión estricta sin pérdidas)</span>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- 2. Rotación y Orientación -->
+                <section class="cyber-card">
+                    <div class="card-header">
+                        <span class="step-num">[B]</span>
+                        <h3 class="card-title">ROTACIÓN & ORIENTACIÓN</h3>
+                    </div>
+                    <p class="panel-instructions">&gt; Gira la imagen en pasos de 90° o ángulo libre y aplica efecto espejo.</p>
+
+                    <div class="rotate-buttons-grid">
+                        <button type="button" class="cyber-mini-btn rotate-action-btn" id="btn-rotate-ccw" title="Girar 90° a la izquierda">
+                            ↺ -90° IZQ
+                        </button>
+                        <button type="button" class="cyber-mini-btn rotate-action-btn" id="btn-rotate-cw" title="Girar 90° a la derecha">
+                            ↻ +90° DER
+                        </button>
+                        <button type="button" class="cyber-mini-btn rotate-action-btn" id="btn-rotate-180" title="Invertir 180°">
+                            ⇅ 180°
+                        </button>
+                        <button type="button" class="cyber-mini-btn rotate-action-btn" id="btn-flip-h" title="Espejo horizontal">
+                            ↔ ESPEJO H
+                        </button>
+                        <button type="button" class="cyber-mini-btn rotate-action-btn" id="btn-flip-v" title="Espejo vertical">
+                            ↕ ESPEJO V
+                        </button>
+                    </div>
+
+                    <div class="control-box" style="margin-top: 0.8rem;">
+                        <div class="range-header">
+                            <label class="control-tag" for="rotate-angle-slider">&gt; Ángulo Libre:</label>
+                            <span class="range-val" id="val-rotate-angle">0°</span>
+                        </div>
+                        <input type="range" id="rotate-angle-slider" min="-180" max="180" value="0" class="cyber-range">
+                    </div>
+                    <button type="button" class="cyber-mini-btn" id="btn-reset-rotation" style="margin-top: 0.4rem; width: 100%;">
+                        ↺ Restablecer Orientación (0°)
+                    </button>
+                </section>
+
+                <!-- 3. Redimensión y Escala -->
+                <section class="cyber-card">
+                    <div class="card-header flex-between">
+                        <div>
+                            <span class="step-num">[C]</span>
+                            <h3 class="card-title">REDIMENSIONAR & ESCALAR</h3>
+                        </div>
+                        <label class="cyber-check-label">
+                            <input type="checkbox" id="enable-resize-check">
+                            <span>Activar</span>
+                        </label>
+                    </div>
+                    
+                    <div id="resize-options-body" style="opacity: 0.45; pointer-events: none; transition: opacity 0.2s ease;">
+                        <div class="dim-display">
+                            <span class="dim-label">DIMENSIONES ACTUALES:</span>
+                            <strong class="dim-val" id="resize-orig-dims">0 x 0 px</strong>
+                        </div>
+
+                        <div class="dims-inputs-row">
+                            <div class="input-col">
+                                <label class="control-tag">ANCHO (px):</label>
+                                <input type="number" id="resize-width" class="cyber-input" placeholder="Ancho">
+                            </div>
+                            <div class="aspect-col">
+                                <button type="button" id="btn-toggle-aspect" class="cyber-aspect-btn active" title="Bloquear proporción">🔒</button>
+                            </div>
+                            <div class="input-col">
+                                <label class="control-tag">ALTO (px):</label>
+                                <input type="number" id="resize-height" class="cyber-input" placeholder="Alto">
+                            </div>
+                        </div>
+
+                        <label class="control-tag" style="margin-top: 0.7rem; display:block;">&gt; Escala Rápida:</label>
+                        <div class="scale-chips-grid">
+                            <button type="button" class="scale-chip" data-scale="0.25">25%</button>
+                            <button type="button" class="scale-chip" data-scale="0.5">50%</button>
+                            <button type="button" class="scale-chip" data-scale="0.75">75%</button>
+                            <button type="button" class="scale-chip" data-scale="1.0">100%</button>
+                            <button type="button" class="scale-chip" data-scale="1.5">150%</button>
+                            <button type="button" class="scale-chip" data-scale="2.0">200%</button>
+                        </div>
+
+                        <div class="control-box" style="margin-top: 0.7rem;">
+                            <label class="control-tag">&gt; Resolución Estándar:</label>
+                            <select id="resize-preset-select" class="cyber-select">
+                                <option value="">Seleccionar preset...</option>
+                                <option value="1920x1080">Full HD (1920 x 1080)</option>
+                                <option value="1280x720">HD (1280 x 720)</option>
+                                <option value="800x800">Cuadrado Redes (800 x 800)</option>
+                                <option value="512x512">Icono / Avatar (512 x 512)</option>
+                                <option value="256x256">Miniatura (256 x 256)</option>
+                            </select>
+                        </div>
+
+                        <div class="control-box" style="margin-top: 0.7rem;">
+                            <label class="control-tag">&gt; Algoritmo de Remuestreo:</label>
+                            <select id="resize-algorithm" class="cyber-select">
+                                <option value="lanczos" selected>Lanczos (Nitidez profesional / HD)</option>
+                                <option value="bicubic">Bicúbico (Suave para fotografías)</option>
+                                <option value="nearest">Vecino Más Cercano (Pixel Art)</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Recorte de Área (Crop) -->
+                <section class="cyber-card">
+                    <div class="card-header flex-between">
+                        <div>
+                            <span class="step-num">[D]</span>
+                            <h3 class="card-title">RECORTAR ÁREA (CROP)</h3>
+                        </div>
+                        <label class="cyber-check-label">
+                            <input type="checkbox" id="enable-crop-check">
+                            <span>Activar</span>
+                        </label>
+                    </div>
+
+                    <div id="crop-options-body" style="opacity: 0.45; pointer-events: none; transition: opacity 0.2s ease;">
+                        <label class="control-tag">&gt; Proporción:</label>
+                        <div class="crop-ratios-grid">
+                            <button type="button" class="ratio-btn active" data-ratio="free">Libre</button>
+                            <button type="button" class="ratio-btn" data-ratio="1:1">1:1 Cuadrado</button>
+                            <button type="button" class="ratio-btn" data-ratio="16:9">16:9 Panorámico</button>
+                            <button type="button" class="ratio-btn" data-ratio="4:3">4:3 Estándar</button>
+                            <button type="button" class="ratio-btn" data-ratio="9:16">9:16 Stories</button>
+                        </div>
+
+                        <div class="crop-inputs-grid" style="margin-top: 0.7rem;">
+                            <div class="crop-coord-box">
+                                <label class="control-tag">X:</label>
+                                <input type="number" id="crop-x" class="cyber-input" value="0">
+                            </div>
+                            <div class="crop-coord-box">
+                                <label class="control-tag">Y:</label>
+                                <input type="number" id="crop-y" class="cyber-input" value="0">
+                            </div>
+                            <div class="crop-coord-box">
+                                <label class="control-tag">ANCHO:</label>
+                                <input type="number" id="crop-w" class="cyber-input" value="0">
+                            </div>
+                            <div class="crop-coord-box">
+                                <label class="control-tag">ALTO:</label>
+                                <input type="number" id="crop-h" class="cyber-input" value="0">
+                            </div>
+                        </div>
+
+                        <button type="button" class="cyber-mini-btn" id="btn-reset-crop" style="margin-top: 0.6rem; width: 100%;">
+                            ↺ Restablecer área completa
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Botón de Ejecución Único -->
+                <button type="button" class="cyber-btn-action" id="btn-apply-convert" style="margin-top: 0.5rem; padding: 0.85rem;">
+                    <span class="btn-cmd">&gt; EJECUTAR PROCESAMIENTO Y CAMBIO DE FORMATO [ENTER]</span>
+                </button>
+            </div>
+
+        </aside>
+
+        <!-- Panel Derecho: Visor Interactivo y Descargas -->
+        <section class="cyber-viewport-area">
+            
+            <!-- Barra de Controles de Vista -->
+            <div class="viewport-header-bar">
+                <div class="view-mode-tabs">
+                    <button class="vmode-btn active" data-view="split">[ ◨ COMPARADOR ]</button>
+                    <button class="vmode-btn" data-view="result" id="btn-view-result">[ ⚡ RESULTADO ]</button>
+                    <button class="vmode-btn" data-view="original">[ 🖼️ ORIGINAL ]</button>
+                    <button class="vmode-btn" id="btn-wireframe" title="Ver curvas Bézier y nodos de contorno">[ 🕸️ NODOS ]</button>
+                </div>
+
+                <div class="zoom-toolbar">
+                    <button class="zoom-btn" id="btn-zoom-out" title="Reducir">[-]</button>
+                    <span class="zoom-readout" id="zoom-indicator">100%</span>
+                    <button class="zoom-btn" id="btn-zoom-in" title="Aumentar">[+]</button>
+                    <button class="zoom-btn" id="btn-zoom-reset" title="Restablecer">[↺ RESET]</button>
+                </div>
+            </div>
+
+            <!-- Lienzo de Inspección -->
+            <div class="cyber-canvas" id="canvas-container">
+                <div class="canvas-tag tag-left" id="badge-left" style="display: none;">&lt; ORIGINAL</div>
+                <div class="canvas-tag tag-right" id="badge-right" style="display: none;">RESULTADO PROCESADO &gt;</div>
+
+                <!-- Estado Inicial Vacío con Tutorial Visual -->
+                <div class="canvas-empty" id="empty-state">
+                    <div class="empty-terminal-guide">
+                        <div class="guide-header">
+                            <span class="guide-prompt">&gt;_</span> STORMK90 // GUÍA RÁPIDA DE USO:
+                        </div>
+                        <div class="guide-steps">
+                            <div class="guide-step-row">
+                                <span class="g-num">[1]</span>
+                                <div class="g-text">
+                                    <strong>SELECCIONA EL MODO</strong> en el panel izquierdo:<br>
+                                    <span class="g-dim">⚡ Vectorial (SVG/EPS/PDF por capas) &bull; 🔄 Formato & Edición (Rotar, Comprimir, Redimensionar, Recortar)</span>
+                                </div>
+                            </div>
+                            <div class="guide-step-row">
+                                <span class="g-num">[2]</span>
+                                <div class="g-text">
+                                    <strong>CARGA TU IMAGEN</strong> arrastrándola aquí, pulsando en explorar o con <strong>Ctrl + V</strong>.
+                                </div>
+                            </div>
+                            <div class="guide-step-row">
+                                <span class="g-num">[3]</span>
+                                <div class="g-text">
+                                    <strong>PULSA EL BOTÓN DE ACCIÓN</strong> verde y descarga tu resultado optimizado abajo.
+                                </div>
+                            </div>
+                        </div>
+                        <p class="guide-footer-hint">&gt; Arrastra cualquier imagen PNG, JPG o WEBP a esta zona para empezar.</p>
+                    </div>
+                </div>
+
+                <!-- Spinner de Procesamiento -->
+                <div class="cyber-loader" id="loading-overlay" style="display: none;">
+                    <div class="loader-terminal">
+                        <div class="cyber-spin-ring"></div>
+                        <h4 id="loading-text" class="loader-title">&gt; PROCESANDO IMAGEN...</h4>
+                        <p class="loader-desc">Ejecutando transformaciones matemáticas en memoria...</p>
+                    </div>
+                </div>
+
+                <!-- Envoltorio del Visor de Capas -->
+                <div class="viewer-wrap" id="viewer-wrapper" style="display: none;">
+                    <!-- Capa Ráster Original -->
+                    <div class="layer-item layer-raster" id="raster-layer">
+                        <img id="img-original" src="" alt="Imagen Ráster Original">
+                    </div>
+
+                    <!-- Capa Ráster Procesada (Compresión, Redimensión, Recorte y Formato) -->
+                    <div class="layer-item layer-processed" id="processed-layer" style="display: none;">
+                        <img id="img-processed" src="" alt="Imagen Procesada">
+                    </div>
+
+                    <!-- Capa Vectorial Renderizada (Vector AI) -->
+                    <div class="layer-item layer-vector" id="vector-layer">
+                        <div id="svg-container"></div>
+                    </div>
+
+                    <!-- Línea Divisoria Deslizante Láser -->
+                    <div class="laser-slider" id="split-line">
+                        <div class="laser-handle">
+                            <span>◀ ▶</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra Inferior de Métricas y Descarga -->
+            <div class="cyber-footer-bar" id="download-bar" style="display: none;">
+                
+                <!-- Métricas Dinámicas -->
+                <div class="metrics-cluster" id="metrics-cluster">
+                    <div class="metric-box" id="metric-box-1">
+                        <span class="m-label" id="m-label-1">CURVAS:</span>
+                        <strong class="m-val" id="metric-paths">0</strong>
+                    </div>
+                    <div class="metric-box" id="metric-box-2">
+                        <span class="m-label" id="m-label-2">TIEMPO:</span>
+                        <strong class="m-val" id="metric-time">0.0s</strong>
+                    </div>
+                    <div class="metric-box" id="metric-box-3">
+                        <span class="m-label" id="m-label-3">TAMAÑO:</span>
+                        <strong class="m-val" id="metric-size">0 KB</strong>
+                    </div>
+                    <div class="metric-box" id="metric-box-savings" style="display: none;">
+                        <span class="m-label">REDUCCIÓN:</span>
+                        <strong class="m-val savings-highlight" id="metric-savings">-0%</strong>
+                    </div>
+                </div>
+
+                <!-- Acciones Vectoriales -->
+                <div class="export-actions" id="vector-export-actions">
+                    <button class="cyber-dl-btn btn-eps" id="btn-download-eps" title="Descargar como Encapsulated PostScript">
+                        <span class="badge-pro">PRO</span> [ 📐 DESCARGAR EPS ]
+                    </button>
+                    <button class="cyber-dl-btn" id="btn-download-svg" title="Descargar como Scalable Vector Graphics">
+                        [ 💾 SVG ]
+                    </button>
+                    <button class="cyber-dl-btn" id="btn-download-pdf" title="Descargar como Vector PDF">
+                        [ 📄 PDF ]
+                    </button>
+                    <button class="cyber-dl-btn btn-zip" id="btn-download-zip" title="Descargar archivo empaquetado ZIP">
+                        [ 📦 TODO EN ZIP ]
+                    </button>
+                </div>
+
+                <!-- Acciones Ráster (Compresión, Redimensión, Recorte, Conversión) -->
+                <div class="export-actions" id="raster-export-actions" style="display: none;">
+                    <a id="btn-download-raster" class="cyber-dl-btn btn-raster-download" href="#" download="imagen_optimizada">
+                        <span class="badge-pro">DESCARGAR</span> [ 💾 DESCARGAR IMAGEN PROCESADA ]
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notificaciones Toast Tipo Terminal -->
+    <div id="toast" class="terminal-toast"></div>
+
+    <!-- Script de Seguridad Gatekeeper para la Suite de Utilidades -->
+    <script>
+        /**
+         * Función: checkSuiteAuth
+         * Descripción: Valida que el operador posea un token de autorización activo antes de permitir el uso de la suite.
+         */
+        (function checkSuiteAuth() {
+            const MASTER_HASH = "896fb5710ea22e9e158c6f817f2fc508dc02cfabefce89e33f3117e2473f1601";
+            const token = localStorage.getItem("stormk90_auth_token");
+            if (token !== MASTER_HASH) {
+                // Redirigir al Hub principal para autorización
+                window.location.replace("/?auth=required");
+            }
+        })();
+    </script>
+
+    <!-- Script de la Suite de Utilidades con Cache-Buster -->
+    <script src="js/utils-vector.js?v=4.0"></script>
+</body>
+</html>

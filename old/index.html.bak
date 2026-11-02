@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STORMK90 - Hacked</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: "Courier New", monospace;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            z-index: 10;
+        }
+        .ascii-art {
+            color: #00ff41;
+            font-size: 12px;
+            line-height: 1.2;
+            text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
+            white-space: pre;
+            animation: flicker 0.15s infinite;
+        }
+        .message {
+            color: #00ff41;
+            font-size: 18px;
+            margin-top: 20px;
+            text-shadow: 0 0 10px #00ff41;
+            animation: pulse 2s infinite;
+        }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.95; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-size: 14px;
+            color: #00ff41;
+            opacity: 0.3;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to { top: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrix"></div>
+    <div class="container">
+        <div class="ascii-art">
+    ███████╗████████╗ ██████╗ ██████╗ ███╗   ███╗██╗  ██╗ ██████╗  ██████╗ 
+    ██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗████╗ ████║██║ ██╔╝██╔═████╗██╔═══██╗
+    ███████╗   ██║   ██║   ██║██████╔╝██╔████╔██║█████╔╝ ╚██████╔╝██║   ██║
+    ╚════██║   ██║   ██║   ██║██╔══██╗██║╚██╔╝██║██╔═██╗  ╚═══██║ ██║   ██║
+    ███████║   ██║   ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██╗ █████╔╝ ╚██████╔╝
+    ╚══════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚════╝   ╚═════╝ 
+</div>
+        <div class="message">
+            ▓▒░ SYSTEM BREACHED ░▒▓<br>
+            ▓▒░ ACCESS GRANTED  ░▒▓
+        </div>
+    </div>
+    <script>
+        // Efecto Matrix de fondo
+        const matrix = document.getElementById("matrix");
+        const chars = "アイウ8エオカキクケコサ7シスセソタチツテケ0コサシスセソタチ3ツテト";
+        
+        for (let i = 0; i < 400; i++) {
+            const column = document.createElement("div");
+            column.className = "matrix-column";
+            column.style.left = Math.random() * 100 + "%";
+            column.style.animationDuration = (Math.random() * 3 + 2) + "s";
+            column.style.animationDelay = Math.random() * 4 + "s";
+            
+            let text = "";
+            for (let j = 0; j < 20; j++) {
+                text += chars[Math.floor(Math.random() * chars.length)] + "<br>";
+            }
+            column.innerHTML = text;
+            matrix.appendChild(column);
+        }
+    </script>
+</body>
+</html>
+
