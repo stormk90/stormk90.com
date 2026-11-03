@@ -745,44 +745,26 @@
     <!-- Script del Efecto Matrix y Seguridad Gatekeeper -->
     <script>
         /**
-         * Hash criptográfico SHA-256 de la contraseña maestra (Stormk90#2026)
-         * Cálculo: SHA-256("Stormk90#2026")
+         * SEGURIDAD: este cliente NO contiene ningún secreto.
+         * La clave se valida en el servidor (login.php) contra un hash PBKDF2
+         * y la sesión vive en una cookie HttpOnly gestionada por el servidor.
          */
-        const MASTER_PASS_HASH = "896fb5710ea22e9e158c6f817f2fc508dc02cfabefce89e33f3117e2473f1601";
-        const AUTH_STORAGE_KEY = "stormk90_auth_token";
         let targetHrefAfterUnlock = null;
-        let failedAttempts = 0;
+        let isAuthenticated = false;
 
         /**
-         * Función: sha256Hex
-         * Descripción: Calcula el hash criptográfico SHA-256 en formato hexadecimal de una cadena
-         *              utilizando la Web Crypto API nativa y segura del navegador.
+         * Función: checkSession
+         * Descripción: Pregunta al servidor si la sesión actual es válida.
+         *              Las rutas protegidas (p.ej. /utils/) devuelven 302 hacia
+         *              /?auth=required... si no hay cookie de sesión válida.
          */
-        async function sha256Hex(plainText) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(plainText);
-            const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-        }
-
-        /**
-         * Función: isUserAuthenticated
-         * Descripción: Verifica si existe un token de sesión válido en localStorage o en la cookie segura.
-         */
-        function isUserAuthenticated() {
-            const token = localStorage.getItem(AUTH_STORAGE_KEY);
-            const hasCookie = document.cookie.includes(`stormk90_session=${MASTER_PASS_HASH}`);
-            if (token === MASTER_PASS_HASH || hasCookie) {
-                if (!hasCookie) {
-                    document.cookie = `stormk90_session=${MASTER_PASS_HASH}; path=/; max-age=2592000; SameSite=Lax; Secure`;
-                }
-                if (token !== MASTER_PASS_HASH) {
-                    localStorage.setItem(AUTH_STORAGE_KEY, MASTER_PASS_HASH);
-                }
-                return true;
+        async function checkSession() {
+            try {
+                const res = await fetch("/utils/", { method: "HEAD", credentials: "same-origin", redirect: "follow" });
+                return res.status === 200 && !res.redirected;
+            } catch (e) {
+                return false;
             }
-            return false;
         }
 
         /**
@@ -811,12 +793,13 @@
 
         /**
          * Función: submitAuthPasscode
-         * Descripción: Procesa la clave introducida por el usuario, valida su hash criptográfico
-         *              y desbloquea las herramientas en caso de coincidencia exitosa.
+         * Descripción: Envía la clave al servidor (login.php), que la verifica
+         *              contra su hash PBKDF2 y emite la cookie de sesión HttpOnly.
          */
         async function submitAuthPasscode() {
             const input = document.getElementById("auth-pass-input");
             const errorMsg = document.getElementById("auth-error-msg");
+            const submitBtn = document.getElementById("auth-submit-btn");
             const rawPassword = input.value.trim();
 
             if (!rawPassword) {
@@ -825,46 +808,55 @@
                 return;
             }
 
-            const computedHash = await sha256Hex(rawPassword);
+            submitBtn.disabled = true;
+            let res, data = {};
+            try {
+                res = await fetch("/login.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "same-origin",
+                    body: JSON.stringify({ pass: rawPassword }),
+                });
+                data = await res.json().catch(() => ({}));
+            } catch (e) {
+                errorMsg.textContent = "🛑 ERROR DE CONEXIÓN // REINTENTE";
+                errorMsg.style.display = "block";
+                submitBtn.disabled = false;
+                return;
+            }
+            input.value = "";
 
-            if (computedHash === MASTER_PASS_HASH) {
-                // Autenticación correcta: guardar credencial de sesión en almacenamiento y cookie segura
-                localStorage.setItem(AUTH_STORAGE_KEY, computedHash);
-                document.cookie = `stormk90_session=${computedHash}; path=/; max-age=2592000; SameSite=Lax; Secure`;
+            if (res.ok && data.ok) {
                 closeAuthModal();
                 updateUIForAuthState(true);
-
-                // Si venía de pulsar una herramienta concreta, abrirla de inmediato
                 if (targetHrefAfterUnlock) {
                     window.location.href = targetHrefAfterUnlock;
                 }
-            } else {
-                failedAttempts++;
-                errorMsg.textContent = `❌ CLAVE INVÁLIDA (INTENTOS: ${failedAttempts})`;
-                errorMsg.style.display = "block";
-                input.value = "";
-                input.focus();
-
-                if (failedAttempts >= 5) {
-                    errorMsg.textContent = "🛑 DEMASIADOS INTENTOS FALLIDOS // BLOQUEO TEMPORAL";
-                    document.getElementById("auth-submit-btn").disabled = true;
-                    setTimeout(() => {
-                        failedAttempts = 0;
-                        document.getElementById("auth-submit-btn").disabled = false;
-                        errorMsg.style.display = "none";
-                    }, 30000);
-                }
+                return;
             }
+
+            submitBtn.disabled = false;
+            if (res.status === 429 || data.error === "too_many") {
+                errorMsg.textContent = "🛑 DEMASIADOS INTENTOS // BLOQUEO TEMPORAL";
+                submitBtn.disabled = true;
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    errorMsg.style.display = "none";
+                }, 60000);
+            } else {
+                errorMsg.textContent = "❌ CLAVE INVÁLIDA";
+                input.focus();
+            }
+            errorMsg.style.display = "block";
         }
 
         /**
          * Función: toggleAuthAction
-         * Descripción: Permite desbloquear el acceso o cerrar la sesión activa (bloquear) desde la cabecera.
+         * Descripción: Cierra la sesión activa (bloquear) o abre el modal según el estado.
          */
-        function toggleAuthAction() {
-            if (isUserAuthenticated()) {
-                localStorage.removeItem(AUTH_STORAGE_KEY);
-                document.cookie = "stormk90_session=; path=/; max-age=0; SameSite=Lax; Secure";
+        async function toggleAuthAction() {
+            if (isAuthenticated) {
+                try { await fetch("/logout.php", { method: "POST", credentials: "same-origin" }); } catch (e) {}
                 updateUIForAuthState(false);
             } else {
                 openAuthModal();
@@ -876,6 +868,7 @@
          * Descripción: Actualiza dinámicamente las tarjetas y botones según el estado de autenticación.
          */
         function updateUIForAuthState(authenticated) {
+            isAuthenticated = authenticated;
             const statusDot = document.getElementById("system-status-dot");
             const statusText = document.getElementById("system-status-text");
             const statusBtn = document.getElementById("auth-status-btn");
@@ -964,9 +957,10 @@
         }
 
         // Listener para permitir presionar Enter en el campo de contraseña
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             initMatrixRain();
-            const authenticated = isUserAuthenticated();
+            localStorage.removeItem("stormk90_auth_token"); // limpiar restos del sistema anterior
+            const authenticated = await checkSession();
             updateUIForAuthState(authenticated);
 
             const urlParams = new URLSearchParams(window.location.search);

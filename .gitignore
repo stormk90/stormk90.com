@@ -1,0 +1,3 @@
+# Secretos del gate de autenticación — NUNCA subir a git
+gate/secrets.php
+gate/rl.json
