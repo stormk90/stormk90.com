@@ -140,6 +140,36 @@
             box-shadow: 0 0 10px #00ff41;
         }
 
+        /* Botón Único de Acceso Principal */
+        .access-main-btn {
+            display: block;
+            margin: 40px auto 10px auto;
+            padding: 18px 42px;
+            background: rgba(0, 255, 65, 0.1);
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            box-shadow: 0 0 18px rgba(0, 255, 65, 0.3);
+            transition: all 0.25s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .access-main-btn:hover {
+            background: #00ff41;
+            color: #030804;
+            box-shadow: 0 0 30px #00ff41;
+            animation: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
         /* Cuadrícula Cyberpunk de Utilidades */
         .utils-grid {
             width: 100%;
@@ -488,13 +518,18 @@
                 <span class="status-dot"></span>
                 <span>DOMINIO: STORMK90.COM</span>
             </div>
-            <button class="auth-toggle-btn" id="auth-status-btn" onclick="toggleAuthAction()">
-                [ 🔒 DESBLOQUEAR ]
+            <button class="auth-toggle-btn hidden" id="auth-status-btn" onclick="toggleAuthAction()">
+                [ 🔓 BLOQUEAR ]
             </button>
         </div>
 
+        <!-- Botón Único de Acceso (visible solo sin autenticar) -->
+        <button class="access-main-btn" id="access-main-btn" onclick="openAuthModal()">
+            [ 🔒 ACCEDER AL HUB ]
+        </button>
+
         <!-- Cuadrícula de Aplicaciones y Utilidades (Grid Cyberpunk) -->
-        <main class="utils-grid">
+        <main class="utils-grid hidden" id="utils-grid">
 
             <!-- App 1: Conversor Vectorial IA -->
             <article class="util-card is-locked" data-card="true">
@@ -844,13 +879,18 @@
             const statusDot = document.getElementById("system-status-dot");
             const statusText = document.getElementById("system-status-text");
             const statusBtn = document.getElementById("auth-status-btn");
+            const mainGateBtn = document.getElementById("access-main-btn");
+            const utilsGrid = document.getElementById("utils-grid");
             const cards = document.querySelectorAll("[data-card='true']");
             const actionBtns = document.querySelectorAll("[data-protected='true']");
 
             if (authenticated) {
                 statusDot.classList.remove("locked");
                 statusText.textContent = "ACCESO: AUTORIZADO";
+                statusBtn.classList.remove("hidden");
                 statusBtn.textContent = "[ 🔓 BLOQUEAR ]";
+                mainGateBtn.classList.add("hidden");
+                utilsGrid.classList.remove("hidden");
 
                 cards.forEach(card => card.classList.remove("is-locked"));
                 actionBtns.forEach(btn => {
@@ -863,7 +903,10 @@
             } else {
                 statusDot.classList.add("locked");
                 statusText.textContent = "ACCESO: PROTEGIDO";
+                statusBtn.classList.add("hidden");
                 statusBtn.textContent = "[ 🔒 DESBLOQUEAR ]";
+                mainGateBtn.classList.remove("hidden");
+                utilsGrid.classList.add("hidden");
 
                 cards.forEach(card => card.classList.add("is-locked"));
                 actionBtns.forEach(btn => {
