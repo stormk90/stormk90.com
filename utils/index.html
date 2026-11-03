@@ -603,17 +603,25 @@
     <!-- Notificaciones Toast Tipo Terminal -->
     <div id="toast" class="terminal-toast"></div>
 
-    <!-- Script de Seguridad Gatekeeper para la Suite de Utilidades -->
+    <!-- Script de Gatekeeper: confía en la sesión del servidor (cookie HttpOnly emitida por /login.php) -->
     <script>
         /**
          * Función: checkSuiteAuth
-         * Descripción: Valida que el operador posea un token de autorización activo antes de permitir el uso de la suite.
+         * Descripción: Verifica la sesión contra el servidor. Sin secretos en el cliente:
+         *              si el servidor redirige (302) es que no hay sesión válida.
          */
-        (function checkSuiteAuth() {
-            const MASTER_HASH = "896fb5710ea22e9e158c6f817f2fc508dc02cfabefce89e33f3117e2473f1601";
-            const token = localStorage.getItem("stormk90_auth_token");
-            if (token !== MASTER_HASH) {
-                // Redirigir al Hub principal para autorización
+        (async function checkSuiteAuth() {
+            try {
+                const res = await fetch(window.location.href.split("#")[0], {
+                    method: "HEAD",
+                    credentials: "same-origin",
+                    redirect: "follow",
+                    cache: "no-store",
+                });
+                if (res.status !== 200 || res.redirected) {
+                    window.location.replace("/?auth=required");
+                }
+            } catch (err) {
                 window.location.replace("/?auth=required");
             }
         })();
