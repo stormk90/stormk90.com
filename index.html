@@ -53,14 +53,14 @@
         /* Cabecera ASCII */
         .ascii-art {
             color: #00ff41;
-            font-size: 10px;
+            font-size: min(10px, 2vw);
             line-height: 1.15;
             text-shadow: 0 0 10px #00ff41, 0 0 20px rgba(0, 255, 65, 0.6);
             white-space: pre;
             animation: flicker 0.15s infinite;
             text-align: center;
             margin-bottom: 12px;
-            overflow-x: auto;
+            overflow-x: hidden;
             max-width: 100%;
         }
 
@@ -713,6 +713,28 @@
                 </button>
             </article>
 
+            <!-- App 9: FreeLLMAPI - Unified LLM Router -->
+            <article class="util-card is-locked" data-card="true">
+                <div>
+                    <div class="card-header">
+                        <span class="card-icon">🧠</span>
+                        <span class="card-badge">LLM ROUTER</span>
+                    </div>
+                    <h2 class="card-title">FreeLLMAPI · Router LLM</h2>
+                    <p class="card-desc">
+                        Enrutador unificado de LLMs: gestión de claves API, distribución de tráfico entre proveedores y analíticas de uso en tiempo real.
+                    </p>
+                    <div class="card-tags">
+                        <span class="tag-pill">LLM</span>
+                        <span class="tag-pill">ROUTING</span>
+                        <span class="tag-pill">API KEYS</span>
+                        <span class="tag-pill">ANALYTICS</span>
+                    </div>
+                </div>
+                <button class="card-action-btn btn-locked" data-protected="true" data-href="/freellmapi/">
+                    [ 🔒 ABRIR FREELLM API ]
+                </button>
+            </article>
         </main>
 
         <!-- Pie de página informativo -->
