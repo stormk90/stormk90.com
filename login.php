@@ -60,8 +60,13 @@ if (!$ok) {
 unset($state[$ip]);
 @file_put_contents($cfg['state_file'], json_encode($state), LOCK_EX);
 
-// Cookie exigida por la regla del vhost: stormk90_session = sha256(clave)
-setcookie('stormk90_session', hash('sha256', $pass), [
+// Cookie exigida por la regla del vhost: el valor exacto que admite el portón
+// Apache está en gate/secrets.php ('session_cookie'). Si no se define, se
+// usa el esquema clásico sha256(clave) (obligaría a sincronizar el vhost).
+$cookie_val = (isset($cfg['session_cookie']) && is_string($cfg['session_cookie']) && $cfg['session_cookie'] !== '')
+    ? $cfg['session_cookie']
+    : hash('sha256', $pass);
+setcookie('stormk90_session', $cookie_val, [
     'expires'  => $now + 2592000,
     'path'     => '/',
     'secure'   => true,
